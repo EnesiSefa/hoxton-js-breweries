@@ -104,7 +104,7 @@ function breweriesList(state: State) {
     let phoneH3El = document.createElement("h3");
     phoneH3El.textContent = "Phone:";
     let phonePEl = document.createElement("p");
-    phonePEl.textContent = `+ ${brewerie.phone}`;
+    phonePEl.textContent = `+${brewerie.phone}`;
 
     let linkSectionEl = document.createElement("section");
     let aEl = document.createElement("a");

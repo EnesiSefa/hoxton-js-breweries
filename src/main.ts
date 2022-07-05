@@ -37,6 +37,7 @@ function render() {
 
   renderHeader();
   breweriesList(state)
+  listenToSelectStateForm ()
 }
 render();
 
@@ -95,18 +96,19 @@ function breweriesList(state: State) {
     let addressPEl = document.createElement("p");
     addressPEl.textContent = brewerie.street
     let addressPEL2 = document.createElement("p");
-    addressPEL2.textContent = "Chardon, 44024";
     let strongEl = document.createElement("strong")
+    strongEl.textContent = "Chardon, 44024"
 
     let phoneSectionEl = document.createElement("section");
     phoneSectionEl.className = "phone";
     let phoneH3El = document.createElement("h3");
     phoneH3El.textContent = "Phone:";
     let phonePEl = document.createElement("p");
-    phonePEl.textContent = brewerie.phone;
+    phonePEl.textContent = `+ ${brewerie.phone}`;
 
     let linkSectionEl = document.createElement("section");
     let aEl = document.createElement("a");
+    aEl.className= "link"
     aEl.href = brewerie.website_url
     aEl.target = "_blank";
     aEl.textContent = "Visit Website";
@@ -128,7 +130,7 @@ function breweriesList(state: State) {
 
 
 function getInfoFromServer() {
-  fetch("https://api.openbrewerydb.org/breweries?per_page=3")
+  fetch("https://api.openbrewerydb.org/breweries?per_page=10")
     .then((response) => response.json())
     .then((data) => {
       state.breweries = data;
@@ -140,15 +142,16 @@ getInfoFromServer()
 
 
 
-// function listenToSelectStateForm () {
-//   let formEl = document.querySelector<HTMLFormElement>('#select-state-form')
-//   formEl?.addEventListener('submit', function (event) {
-//     event.preventDefault()
-//     let USState = formEl['select-state'].value
-//     state.USState = USState
-//     getBreweriesForState()
-//   })
-// }
+function listenToSelectStateForm () {
+  let formEl = document.querySelector<HTMLFormElement>('#select-state-form')
+  formEl?.addEventListener('submit', function (event) {
+    event.preventDefault()
+    let USState = formEl['select-state'].value
+    state.USState = USState
+    getBreweriesForState()
+  })
+}
+
 
 
 function getBreweriesForState () {

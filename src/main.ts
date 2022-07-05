@@ -1,26 +1,26 @@
 // Write your code here
 type State = {
-    breweries: brewerie[]
+    breweries: Brewerie[]
 }
-type brewerie ={
+type Brewerie ={
+    id: string
+    name: string,
+    brewery_type: string,
+    street: null,
     address_2: null,
     address_3: null,
-    brewery_type: string,
     city: string,
-    country: string,
-    county_province: null,
-    created_at: string,
-    id: number,
-    latitude: string,
-    longitude: string,
-    name: string,
-    obdb_id: string,
-    phone: string,
-    postal_code: string,
     state: string,
-    street: string,
+    county_province: null,
+    postal_code: number,
+    country: string,
+    longitude: null,
+    latitude: null,
+    phone: number,
+    website_url: null,
     updated_at: string,
-    website_url: string
+    created_at: string,
+
 }
 
 
@@ -83,6 +83,7 @@ function renderHeader () {
     let ulEl = document.createElement("ul")
     ulEl.className = "breweries-list"
 
+    for(let brewerie of state.breweries){
     let liEl = document.createElement("li")
     let h2EL = document.createElement("h2")
     h2EL.textContent = "Snow Belt Brew"
@@ -91,20 +92,44 @@ function renderHeader () {
     divEl.className = "type"
     divEl.textContent = "micro"
 
-    let sectionEl = document.createElement("section")
-    sectionEl.className = "address"
-    let h3El = document.createElement("h3")
-    h3El.textContent = "Phone:"
-    let pEl = document.createElement("p")
-    pEl.textContent = "9511 Kile Rd"
-    let pEl2 = document.createElement("p")
-    pEl2.textContent=  "Chardon, 44024"
+    let addressSectionEl = document.createElement("section")
+    addressSectionEl.className = "address"
+    let addressH3El = document.createElement("h3")
+    addressH3El.textContent = "Phone:"
+    let addressPEl = document.createElement("p")
+    addressPEl.textContent = "9511 Kile Rd"
+    let addressPEL2 = document.createElement("p")
+    addressPEL2.textContent=  "Chardon, 44024"
 
-    let sectionEl2 = document.createElement
+    let phoneSectionEl = document.createElement("section")
+    phoneSectionEl.className= "phone"
+    let phoneH3El = document.createElement("h3")
+    phoneH3El.textContent = "Phone:"
+    let phonePEl = document.createElement("p")
+    phonePEl.textContent = "N/A"
+
+    let linkSectionEl = document.createElement("section")
+    let aEl = document.createElement("a")
+    aEl.href = "null"
+    aEl.target = "_blank"
+    aEl.textContent ="Visit Website"
+
+    linkSectionEl.append(aEl)
+    phoneSectionEl.append(phoneH3El,phonePEl)
+    addressSectionEl.append(addressH3El,addressPEl,addressPEL2)
+    liEl.append(h2EL,divEl,addressSectionEl,phoneSectionEl,linkSectionEl)
+    ulEl.append(liEl)
+  }
+    articleEl.append(ulEl)
 
 
 
   }
 
-  function get
+  function getInfoFromServer(){
+    fetch("https://api.openbrewerydb.org/breweries?per_page=3")
+   .then(response => response.json())
+   .then(data => state.breweries = data)
+   render()
+  }
   

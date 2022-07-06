@@ -1,14 +1,15 @@
 // Write your code here
 type State = {
-  USState : ""
-  
-  breweries: Brewerie[];
+  USState: "";
+  breweries: Brewery[];
+  nameFilter: "";
+  typeFilter : ""
 };
-type Brewerie = {
+type Brewery = {
   id: string;
   name: string;
   brewery_type: string;
-  street:  string;
+  street: string;
   address_2: null;
   address_3: null;
   city: string;
@@ -24,20 +25,21 @@ type Brewerie = {
   created_at: string;
 };
 
-
-let state : State= {
-  USState : "",
+let state: State = {
+  USState: "",
   breweries: [],
+  nameFilter: "",
 };
 
 function render() {
+  console.log(state);
   let mailEl = document.querySelector("main");
   if (mailEl === null) return;
   mailEl.textContent = "";
 
   renderHeader();
-  breweriesList(state)
-  listenToSelectStateForm ()
+  breweriesList(state);
+  listenToSelectStateForm();
 }
 render();
 
@@ -51,6 +53,12 @@ function renderHeader() {
   let formEl = document.createElement("form");
   formEl.id = "search-breweries-form";
   formEl.autocomplete = "off";
+  formEl.addEventListener("submit", function (event) {
+    event.preventDefault();
+    let breweriesInput = formEl["search-breweries"].value;
+    state.nameFilter = breweriesInput;
+    render();
+  });
 
   let labelEl = document.createElement("label");
   labelEl.htmlFor = "search-breweries";
@@ -63,7 +71,7 @@ function renderHeader() {
   inputEl.type = "text";
 
   let mainEl = document.querySelector("main");
-  if(mainEl === null) return
+  if (mainEl === null) return;
 
   labelEl.appendChild(h2EL);
   formEl.append(labelEl, inputEl);
@@ -72,19 +80,18 @@ function renderHeader() {
 }
 
 function breweriesList(state: State) {
-  let mainEl = document.querySelector("main")
+  let mainEl = document.querySelector("main");
   let articleEl = document.createElement("article");
 
   let ulEl = document.createElement("ul");
   ulEl.className = "breweries-list";
-  
-   
-   for (let brewerie of state.breweries) {
+
+  for (let brewery of getFilteredBreweriesName()) {
     let ulEl = document.createElement("ul");
-  ulEl.className = "breweries-list";
+    ulEl.className = "breweries-list";
     let liEl = document.createElement("li");
     let h2EL = document.createElement("h2");
-    h2EL.textContent = brewerie.name;
+    h2EL.textContent = brewery.name;
 
     let divEl = document.createElement("div");
     divEl.className = "type";
@@ -95,68 +102,66 @@ function breweriesList(state: State) {
     let addressH3El = document.createElement("h3");
     addressH3El.textContent = "Address:";
     let addressPEl = document.createElement("p");
-    addressPEl.textContent = brewerie.street
+    addressPEl.textContent = brewery.street;
     let addressPEL2 = document.createElement("p");
-    let strongEl = document.createElement("strong")
-    strongEl.textContent = `${brewerie.city}, ${brewerie.postal_code}`
+    let strongEl = document.createElement("strong");
+    strongEl.textContent = `${brewery.city}, ${brewery.postal_code}`;
 
     let phoneSectionEl = document.createElement("section");
     phoneSectionEl.className = "phone";
     let phoneH3El = document.createElement("h3");
     phoneH3El.textContent = "Phone:";
     let phonePEl = document.createElement("p");
-    phonePEl.textContent = brewerie.phone ? brewerie.phone : "N/A";
+    phonePEl.textContent = brewery.phone ? brewery.phone : "N/A";
 
     let linkSectionEl = document.createElement("section");
     let aEl = document.createElement("a");
-    aEl.className= "link"
-    aEl.href = brewerie.website_url
+    aEl.className = "link";
+    aEl.href = brewery.website_url;
     aEl.target = "_blank";
     aEl.textContent = "Visit Website";
 
     linkSectionEl.append(aEl);
     phoneSectionEl.append(phoneH3El, phonePEl);
-    addressPEL2.appendChild(strongEl)
+    addressPEL2.appendChild(strongEl);
     addressSectionEl.append(addressH3El, addressPEl, addressPEL2);
     liEl.append(h2EL, divEl, addressSectionEl, phoneSectionEl, linkSectionEl);
     ulEl.append(liEl);
     articleEl.append(ulEl);
-    mainEl?.append(articleEl)
-
-    
+    mainEl?.append(articleEl);
   }
-  
-  }
-  
+}
 
+function listenToSelectStateForm() {
+  let formEl = document.querySelector<HTMLFormElement>("#select-state-form");
+  formEl?.addEventListener("submit", function (event) {
+    event.preventDefault();
+    let USState = formEl["select-state"].value;
+    state.USState = USState;
+    getBreweriesForState();
+  });
+}
+listenToSelectStateForm();
 
-function getInfoFromServer() {
-  fetch("https://api.openbrewerydb.org/breweries?per_page=10")
-    .then((response) => response.json())
-    .then((data) => {
-      state.breweries = data;
-      console.log(state.breweries)
+function getBreweriesForState() {
+  // find breweries in this state
+  fetch(`https://api.openbrewerydb.org/breweries?by_state=${state.USState}`)
+    .then((r) => r.json())
+    .then((parsedData) => {
+      state.breweries = parsedData;
       render();
     });
-}
-getInfoFromServer()
-
-
-
-function listenToSelectStateForm () {
-  let formEl = document.querySelector<HTMLFormElement>('#select-state-form')
-  formEl?.addEventListener('submit', function (event) {
-    event.preventDefault()
-    let USState = formEl['select-state'].value
-    state.USState = USState
-    getBreweriesForState()
-  })
-}
-
-
-
-function getBreweriesForState () {
-  // find breweries in this state
   // put them in state
   // rerender
 }
+
+function getFilteredBreweriesName() {
+  let searchedBreweries = state.breweries.filter((brewery) =>
+    brewery.name.toUpperCase().includes(state.nameFilter.toUpperCase())
+  );
+
+  return searchedBreweries;
+}
+
+
+

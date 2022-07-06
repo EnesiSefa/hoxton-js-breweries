@@ -3,7 +3,8 @@ type State = {
   USState: "";
   breweries: Brewery[];
   nameFilter: "";
-  typeFilter : ""
+  typeFilter : "",
+  
 };
 type Brewery = {
   id: string;
@@ -40,6 +41,7 @@ function render() {
   renderHeader();
   breweriesList(state);
   listenToSelectStateForm();
+  filterSection()
 }
 render();
 
@@ -79,7 +81,7 @@ function renderHeader() {
   mainEl.appendChild(headerEl);
 }
 
-function breweriesList(state: State) {
+function breweriesList() {
   let mainEl = document.querySelector("main");
   let articleEl = document.createElement("article");
 
@@ -115,8 +117,8 @@ function breweriesList(state: State) {
     phonePEl.textContent = brewery.phone ? brewery.phone : "N/A";
 
     let linkSectionEl = document.createElement("section");
+    linkSectionEl.className = "link"
     let aEl = document.createElement("a");
-    aEl.className = "link";
     aEl.href = brewery.website_url;
     aEl.target = "_blank";
     aEl.textContent = "Visit Website";
@@ -164,4 +166,44 @@ function getFilteredBreweriesName() {
 }
 
 
+function filterSection(){
+  let mainEl = document.querySelector("main")
+
+  let asideEl = document.createElement("aside")
+  asideEl.className = "filters-section"
+
+  let h2EL = document.createElement("")
+  h2EL.textContent = "Filter By:"
+
+  let formEl = document.createElement("form")
+  formEl.id ="filter-by-type-form"
+  formEl.autocomplete = "off"
+  let labelEl = document.createElement("label")
+  labelEl.htmlFor = "filter-by-type"
+
+  let h3El = document.createElement("h3")
+  h3El.textContent ="Type of Brewery"
+  let selectEl = document.createElement("select")
+  selectEl.name = "filter-by-type"
+  selectEl.id = "filter-by-type"
+  let optionSelectType = document.createElement("option")
+  optionSelectType.value = ""
+  optionSelectType.textContent = "Select a type..."
+  let optionMicro = document.createElement("option")
+  optionMicro.value = "micro"
+  optionMicro.textContent = "micro"
+  let optionRegional = document.createElement("option")
+  optionRegional.value = "regional"
+  optionRegional.textContent = "Micro"
+  let optionBrewpub = document.createElement("option")
+  optionBrewpub.value = "brewpub"
+  optionBrewpub.textContent = "Brewpub"
+
+  selectEl.append(optionSelectType,optionMicro,optionRegional,optionBrewpub)
+  labelEl.appendChild(h3El)
+  formEl.append(labelEl,selectEl)
+  asideEl.append(h2EL,formEl)
+  mainEl.append(asideEl)
+  
+}
 

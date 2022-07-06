@@ -63,6 +63,7 @@ function renderHeader() {
   inputEl.type = "text";
 
   let mainEl = document.querySelector("main");
+  if(mainEl === null) return
 
   labelEl.appendChild(h2EL);
   formEl.append(labelEl, inputEl);
@@ -97,14 +98,14 @@ function breweriesList(state: State) {
     addressPEl.textContent = brewerie.street
     let addressPEL2 = document.createElement("p");
     let strongEl = document.createElement("strong")
-    strongEl.textContent = "Chardon, 44024"
+    strongEl.textContent = `${brewerie.city}, ${brewerie.postal_code}`
 
     let phoneSectionEl = document.createElement("section");
     phoneSectionEl.className = "phone";
     let phoneH3El = document.createElement("h3");
     phoneH3El.textContent = "Phone:";
     let phonePEl = document.createElement("p");
-    phonePEl.textContent = `+${brewerie.phone}`;
+    phonePEl.textContent = brewerie.phone ? brewerie.phone : "N/A";
 
     let linkSectionEl = document.createElement("section");
     let aEl = document.createElement("a");
